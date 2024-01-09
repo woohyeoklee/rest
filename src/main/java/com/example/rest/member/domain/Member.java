@@ -31,17 +31,8 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    //비밀번호 변경 및 검증 메서드
-    public void changePassword(String newPassword) {
-        validatePasswordChange(newPassword);
-        this.password = newPassword;
-    }
-    public void validatePasswordChange(String newPassword) {
-        Assert.hasText(newPassword, "새로운 비밀번호는 필수 입력 값입니다.");
-
-        if (newPassword.equals(this.password)) {
-            throw new IllegalArgumentException("새로운 비밀번호는 기존 비밀번호와 달라야 합니다.");
-        }
+    public void changePassword(String password) {
+        this.password = password;
     }
 
     public boolean isAdmin() {

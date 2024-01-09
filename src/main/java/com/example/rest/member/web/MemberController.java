@@ -68,21 +68,8 @@ public class MemberController {
 
     // 비밀번호 변경
     @PatchMapping("/change-password")
-    public ResponseEntity<MemberDTO> changePassword(@RequestBody ChangePasswordCommand changePassword,
-                                                    @SessionAttribute(name = "memberId", required = false) String memberId) {
-        if (memberId == null) {
-            // 세션에 memberId가 없으면 로그인 페이지로 리다이렉트 또는 로그인을 요구하는 응답을 반환
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MemberDTO());
-        }
-
-        // 로그인된 상태이므로 비밀번호 변경 로직 수행
-        try {
-            writeService.changePassword(changePassword);
-            Member updatedMember = readService.findByMemberId(memberId);
-            return ResponseEntity.ok(mapToDTO(updatedMember));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MemberDTO());
-        }
+    public void changePassword(@RequestBody ChangePasswordCommand command) {
+        writeService.changePassword(command);
     }
 
     // 회원탈퇴

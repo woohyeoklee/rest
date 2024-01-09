@@ -8,10 +8,13 @@ import com.example.rest.member.web.command.RegisterMemberCommand;
 import com.example.rest.utils.SHA256Util;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class WriteMemberService {
@@ -37,10 +40,11 @@ public class WriteMemberService {
     }
 
     // 비밀번호 변경
-    public void changePassword(ChangePasswordCommand changePassword) {
-        Member member = readMemberService.findByMemberId(changePassword.getMemberId());
-        member.validatePasswordChange(changePassword.getNewPassword());
-        member.changePassword(changePassword.getNewPassword());
+    @Transactional
+    public void changePassword(ChangePasswordCommand command) {
+        Member member = readMemberService.findByMemberId(command.getMemberId());
+        var newHashedPassword = SHA256Util.encryptSHA256(command.getNewPassword());
+        member.changePassword(newHashedPassword);
         jpaMemberRepository.save(member);
     }
 

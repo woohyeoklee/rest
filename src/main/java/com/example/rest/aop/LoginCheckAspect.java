@@ -5,7 +5,6 @@ import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -15,29 +14,29 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Component
 @Aspect
-@Order(Ordered.LOWEST_PRECEDENCE)
+@Order
 @Log4j2
 public class LoginCheckAspect {
 
     @Around("@annotation(com.example.rest.aop.LoginCheck) && @annotation(LoginCheckType)")
     public Object adminLoginCheck(ProceedingJoinPoint proceedingJoinPoint, LoginCheck LoginCheckType) throws Throwable {
-        HttpSession session = (HttpSession) ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest().getSession();
-        String id = null;
+        HttpSession session = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest().getSession();
+        String id;
 
         LoginCheck.LoginCheckType userType = LoginCheckType.type();
-        switch (userType) {
-            case ADMIN:
+        id = switch (userType) {
+            case ADMIN -> {
                 Object adminIdObject = session.getAttribute("adminId");
-                id = (adminIdObject != null) ? adminIdObject.toString() : null;
-                break;
-            case USER:
+                yield (adminIdObject != null) ? adminIdObject.toString() : null;
+            }
+            case USER -> {
                 Object memberIdObject = session.getAttribute("memberId");
-                id = (memberIdObject != null) ? memberIdObject.toString() : null;
-                break;
-        }
+                yield (memberIdObject != null) ? memberIdObject.toString() : null;
+            }
+        };
 
         if (id == null) {
-            throw new HttpStatusCodeException(HttpStatus.UNAUTHORIZED, "로그인한 id값을 확인해주세요.") {};
+            throw new HttpStatusCodeException(HttpStatus.UNAUTHORIZED, "로그인한 id 값을 확인해주세요.") {};
         }
 
         Object[] modifiedArgs = proceedingJoinPoint.getArgs();
