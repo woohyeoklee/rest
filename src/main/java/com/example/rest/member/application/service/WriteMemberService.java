@@ -2,17 +2,16 @@ package com.example.rest.member.application.service;
 
 import com.example.rest.member.application.repository.SpringDataJpaMemberRepository;
 import com.example.rest.member.domain.Member;
-import com.example.rest.member.web.MemberDTO;
 import com.example.rest.member.web.command.ChangePasswordCommand;
 import com.example.rest.member.web.command.RegisterMemberCommand;
-import com.example.rest.utils.SHA256Util;
+
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Log4j2
 @Service
@@ -22,13 +21,13 @@ public class WriteMemberService {
     private final SpringDataJpaMemberRepository jpaMemberRepository;
     private final ReadMemberService readMemberService;
 
+
     //회원가입
     public void register(@Valid RegisterMemberCommand register) {
         if (jpaMemberRepository.existsByMemberId(register.getMemberId())) {
             throw new IllegalArgumentException("이미 사용중인 아이디입니다.");
         }
-
-        var hashedPassword = SHA256Util.encryptSHA256(register.getPassword());
+        var hashedPassword = (register.getPassword());
         Member member = Member.builder()
                 .memberId(register.getMemberId())
                 .password(hashedPassword)
@@ -43,7 +42,7 @@ public class WriteMemberService {
     @Transactional
     public void changePassword(ChangePasswordCommand command) {
         Member member = readMemberService.findByMemberId(command.getMemberId());
-        var newHashedPassword = SHA256Util.encryptSHA256(command.getNewPassword());
+        var newHashedPassword = (command.getNewPassword());
         member.changePassword(newHashedPassword);
         jpaMemberRepository.save(member);
     }

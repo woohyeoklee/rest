@@ -4,7 +4,6 @@ import com.example.rest.member.application.service.ReadMemberService;
 import com.example.rest.member.application.service.WriteMemberService;
 import com.example.rest.member.domain.Member;
 import com.example.rest.member.web.command.ChangePasswordCommand;
-import com.example.rest.member.web.command.DeleteMemberCommand;
 import com.example.rest.member.web.command.LoginMemberCommand;
 import com.example.rest.member.web.command.RegisterMemberCommand;
 import jakarta.servlet.http.HttpSession;
@@ -47,11 +46,12 @@ public class MemberController {
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<MemberDTO> login(@RequestBody LoginMemberCommand command, HttpSession session) {
+    public ResponseEntity<MemberDTO> login(@RequestBody LoginMemberCommand loginCommand, HttpSession session) {
         // 로그인 성공시 세션에 memberId를 저장
         try {
-            MemberDTO memberDTO = readService.login(command);
+            MemberDTO memberDTO = readService.login(loginCommand);
             session.setAttribute("memberId", memberDTO.getMemberId());
+            log.info("session member id : {} ", session.getAttribute("memberId"));
             return ResponseEntity.ok(memberDTO);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MemberDTO());
@@ -69,14 +69,17 @@ public class MemberController {
     // 비밀번호 변경
     @PatchMapping("/change-password")
     public void changePassword(@RequestBody ChangePasswordCommand command) {
-        writeService.changePassword(command);
+        try {
+            writeService.changePassword(command);
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+        }
     }
 
     // 회원탈퇴
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.OK)
-    public HttpStatus deleteMember(@RequestBody DeleteMemberCommand deleteMemberCommand,
-                                   @SessionAttribute(name = "memberId", required = false) String memberId) {
+    public HttpStatus deleteMember(@SessionAttribute(name = "memberId", required = false) String memberId) {
         if (memberId == null) {
             // 세션에 memberId가 없으면 로그인 페이지로 리다이렉트 또는 로그인을 요구하는 응답을 반환
             return HttpStatus.UNAUTHORIZED;
