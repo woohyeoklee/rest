@@ -1,4 +1,4 @@
-package com.example.rest.member.web.command;
+package com.example.rest.member.adapter.in.command;
 
 import lombok.Data;
 

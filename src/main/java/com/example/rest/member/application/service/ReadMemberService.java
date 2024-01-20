@@ -1,10 +1,10 @@
 package com.example.rest.member.application.service;
 
-import com.example.rest.member.application.repository.SpringDataJpaMemberRepository;
+import com.example.rest.member.adapter.out.SpringDataJpaMemberRepository;
 import com.example.rest.member.domain.Member;
 
-import com.example.rest.member.web.MemberDTO;
-import com.example.rest.member.web.command.LoginMemberCommand;
+import com.example.rest.member.adapter.in.MemberDTO;
+import com.example.rest.member.adapter.in.command.LoginMemberCommand;
 import com.example.rest.utils.SHA256Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

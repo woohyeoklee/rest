@@ -1,6 +1,5 @@
-package com.example.rest.member.web;
+package com.example.rest.member.adapter.in;
 
-import com.example.rest.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

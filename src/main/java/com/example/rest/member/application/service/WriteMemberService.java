@@ -1,9 +1,9 @@
 package com.example.rest.member.application.service;
 
-import com.example.rest.member.application.repository.SpringDataJpaMemberRepository;
+import com.example.rest.member.adapter.out.SpringDataJpaMemberRepository;
 import com.example.rest.member.domain.Member;
-import com.example.rest.member.web.command.ChangePasswordCommand;
-import com.example.rest.member.web.command.RegisterMemberCommand;
+import com.example.rest.member.adapter.in.command.ChangePasswordCommand;
+import com.example.rest.member.adapter.in.command.RegisterMemberCommand;
 
 
 import jakarta.validation.Valid;

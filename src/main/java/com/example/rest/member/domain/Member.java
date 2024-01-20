@@ -1,18 +1,8 @@
 package com.example.rest.member.domain;
 
-import com.example.rest.member.web.MemberDTO;
-import com.example.rest.member.web.command.ChangePasswordCommand;
-import com.example.rest.utils.SHA256Util;
+import com.example.rest.member.adapter.in.MemberDTO;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.Assert;
-
-import java.util.Arrays;
-import java.util.Collection;
-
 
 @Builder
 @Entity

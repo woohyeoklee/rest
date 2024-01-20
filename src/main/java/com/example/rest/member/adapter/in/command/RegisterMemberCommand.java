@@ -1,6 +1,5 @@
-package com.example.rest.member.web.command;
+package com.example.rest.member.adapter.in.command;
 
-import com.example.rest.member.domain.Member;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 

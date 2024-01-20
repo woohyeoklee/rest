@@ -1,4 +1,4 @@
-package com.example.rest.member.application.repository;
+package com.example.rest.member.adapter.out;
 
 import com.example.rest.member.domain.Member;
 import lombok.RequiredArgsConstructor;

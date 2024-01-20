@@ -1,11 +1,11 @@
-package com.example.rest.member.web;
+package com.example.rest.member.adapter.in;
 
+import com.example.rest.member.adapter.in.command.ChangePasswordCommand;
+import com.example.rest.member.adapter.in.command.LoginMemberCommand;
 import com.example.rest.member.application.service.ReadMemberService;
 import com.example.rest.member.application.service.WriteMemberService;
 import com.example.rest.member.domain.Member;
-import com.example.rest.member.web.command.ChangePasswordCommand;
-import com.example.rest.member.web.command.LoginMemberCommand;
-import com.example.rest.member.web.command.RegisterMemberCommand;
+import com.example.rest.member.adapter.in.command.RegisterMemberCommand;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
