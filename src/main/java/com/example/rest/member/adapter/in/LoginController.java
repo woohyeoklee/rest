@@ -2,7 +2,7 @@ package com.example.rest.member.adapter.in;
 
 import com.example.rest.member.adapter.in.command.LoginMemberRequest;
 import com.example.rest.member.application.service.ReadMemberService;
-import com.example.rest.member.application.service.WriteMemberService;
+
 import com.example.rest.member.domain.MemberDTO;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 @RequestMapping("/members")
 public class LoginController {
-    private final WriteMemberService writeService;
-    private final ReadMemberService readService;
 
+    private final ReadMemberService readService;
 
     // 로그인
     @PostMapping("/login")
     public ResponseEntity<MemberDTO> login(@RequestBody LoginMemberRequest loginCommand, HttpSession session) {
-        // 로그인 성공시 세션에 memberId를 저장
+        // 로그인 성공시 세션에 memberId를 저장 TODO redis로 변경
         try {
             MemberDTO memberDTO = readService.login(loginCommand);
             session.setAttribute("memberId", memberDTO.getMemberId());
