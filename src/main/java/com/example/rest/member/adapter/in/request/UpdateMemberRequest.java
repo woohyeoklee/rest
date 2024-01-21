@@ -1,11 +1,10 @@
-package com.example.rest.member.adapter.in.command;
+package com.example.rest.member.adapter.in.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class RegisterMemberRequest {
-
+public class UpdateMemberRequest {
     @NotBlank(message = "회원 아이디를 입력해주세요.")
     private String memberId;
 

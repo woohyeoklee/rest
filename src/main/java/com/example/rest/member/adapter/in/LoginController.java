@@ -1,7 +1,8 @@
 package com.example.rest.member.adapter.in;
 
-import com.example.rest.member.adapter.in.command.LoginMemberRequest;
-import com.example.rest.member.application.service.ReadMemberService;
+import com.example.rest.member.adapter.in.request.LoginMemberRequest;
+import com.example.rest.member.application.port.in.command.LoginMemberCommand;
+import com.example.rest.member.application.port.in.usecase.ReadMemberUseCase;
 
 import com.example.rest.member.domain.MemberDTO;
 import jakarta.servlet.http.HttpSession;
@@ -17,14 +18,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/members")
 public class LoginController {
 
-    private final ReadMemberService readService;
+    private final ReadMemberUseCase readMemberUseCase;
 
     // 로그인
     @PostMapping("/login")
-    public ResponseEntity<MemberDTO> login(@RequestBody LoginMemberRequest loginCommand, HttpSession session) {
-        // 로그인 성공시 세션에 memberId를 저장 TODO redis로 변경
+    public ResponseEntity<MemberDTO> login(@RequestBody LoginMemberRequest loginRequest, HttpSession session) {
         try {
-            MemberDTO memberDTO = readService.login(loginCommand);
+            LoginMemberCommand loginCommand = LoginMemberCommand.builder()
+                    .memberId(loginRequest.getMemberId())
+                    .password(loginRequest.getPassword())
+                    .build();
+            MemberDTO memberDTO = readMemberUseCase.login(loginCommand);
             session.setAttribute("memberId", memberDTO.getMemberId());
             log.info("session member id : {} ", session.getAttribute("memberId"));
             return ResponseEntity.ok(memberDTO);
@@ -35,8 +39,9 @@ public class LoginController {
 
     // 로그아웃
     @PostMapping("/logout")
-    @ResponseStatus(HttpStatus.OK)
-    public void logout(HttpSession session) {
-        session.invalidate();
+    public ResponseEntity<Void> logout(HttpSession session) {
+        session.removeAttribute("memberId");
+        log.info("User logged out");
+        return ResponseEntity.ok().build();
     }
 }

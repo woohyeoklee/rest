@@ -1,4 +1,4 @@
-package com.example.rest.member.application.port.in;
+package com.example.rest.member.application.port.in.command;
 
 import lombok.Builder;
 import lombok.Data;

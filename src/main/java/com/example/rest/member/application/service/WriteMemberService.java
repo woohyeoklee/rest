@@ -4,13 +4,12 @@ import com.example.rest.member.domain.MemberDTO;
 import com.example.rest.member.adapter.out.MemberJpaEntity;
 
 
-import com.example.rest.member.application.port.in.DeleteMemberCommand;
-import com.example.rest.member.application.port.in.RegisterMemberCommand;
-import com.example.rest.member.application.port.in.WriteMemberUseCase;
-import com.example.rest.member.application.port.out.DeleteMemberPort;
+import com.example.rest.member.application.port.in.command.UpdateMemberCommand;
+import com.example.rest.member.application.port.in.command.RegisterMemberCommand;
+import com.example.rest.member.application.port.in.usecase.WriteMemberUseCase;
+import com.example.rest.member.application.port.out.UpdateMemberPort;
 import com.example.rest.member.application.port.out.RegisterMemberPort;
 import com.example.rest.member.domain.Member;
-import com.example.rest.utils.SHA256Util;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,30 +22,34 @@ import org.springframework.stereotype.Service;
 public class WriteMemberService implements WriteMemberUseCase {
 
     private final RegisterMemberPort registerMemberPort;
-    private final DeleteMemberPort deleteMemberPort;
+    private final UpdateMemberPort updateMemberPort;
 
     private final ReadMemberService readService;
 
     @Override
-    public MemberDTO registerMember(@Valid RegisterMemberCommand registerCommand) {
+    public MemberDTO registerMember(@Valid RegisterMemberCommand registerMemCmd) {
 
-        var hashedPassword = SHA256Util.encryptSHA256(registerCommand.getPassword());
         MemberJpaEntity memberJpaEntity = registerMemberPort.registerMember(
                 Member.builder()
-                        .memberId(registerCommand.getMemberId())
-                        .password(hashedPassword)
-                        .name(registerCommand.getName())
-                        .email(registerCommand.getEmail())
+                        .memberId(registerMemCmd.getMemberId())
+                        .password(registerMemCmd.getPassword())
+                        .name(registerMemCmd.getName())
+                        .email(registerMemCmd.getEmail())
                         .build()
         );
         return readService.mapToDTO(memberJpaEntity);
     }
 
     @Override
-    public void deleteMember(DeleteMemberCommand command) {
-        deleteMemberPort.deleteMember(
-                command.getMemberId(),
-                command.getPassword());
-
+    public MemberDTO updateMember(UpdateMemberCommand updateMemCmd) {
+        MemberJpaEntity memberJpaEntity = updateMemberPort.updateMember(
+                Member.builder()
+                        .memberId(updateMemCmd.getMemberId())
+                        .password(updateMemCmd.getPassword())
+                        .name(updateMemCmd.getName())
+                        .email(updateMemCmd.getEmail())
+                        .build()
+        );
+        return readService.mapToDTO(memberJpaEntity);
     }
 }

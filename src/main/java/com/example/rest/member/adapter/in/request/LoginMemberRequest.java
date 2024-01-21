@@ -1,4 +1,4 @@
-package com.example.rest.member.adapter.in.command;
+package com.example.rest.member.adapter.in.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

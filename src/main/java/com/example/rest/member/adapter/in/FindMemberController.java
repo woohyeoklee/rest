@@ -1,7 +1,7 @@
 package com.example.rest.member.adapter.in;
 
-import com.example.rest.member.application.port.in.FindMemberCommand;
-import com.example.rest.member.application.port.in.ReadMemberUseCase;
+import com.example.rest.member.application.port.in.command.FindMemberCommand;
+import com.example.rest.member.application.port.in.usecase.ReadMemberUseCase;
 import com.example.rest.member.domain.MemberDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 @RequestMapping("/members")
 public class FindMemberController {
+
     private final ReadMemberUseCase readMemberUseCase;
-
-
 
     // 회원조회
     @GetMapping("/{memberId}")
@@ -28,7 +27,7 @@ public class FindMemberController {
             MemberDTO memberDTO = readMemberUseCase.findByMemberId(findMemberCommand.getMemberId());
             return ResponseEntity.ok(memberDTO);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MemberDTO());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

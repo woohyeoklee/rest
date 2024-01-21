@@ -1,19 +1,18 @@
-package com.example.rest.member.domain;
+package com.example.rest.member.application.port.in.command;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-public class Member {
+@Data
+@Builder
+public class RegisterMemberCommand {
 
     private String memberId;
     private String password;
     private String name;
     private String email;
 
-
-    @Builder
-    public Member(String memberId, String password, String name, String email) {
+    public RegisterMemberCommand(String memberId, String password, String name, String email) {
         this.memberId = memberId;
         this.password = password;
         this.name = name;
