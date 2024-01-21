@@ -1,46 +1,29 @@
 package com.example.rest.member.domain;
 
-import com.example.rest.member.adapter.in.MemberDTO;
-import jakarta.persistence.*;
-import lombok.*;
+import com.example.rest.member.adapter.out.MemberJpaEntity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.Builder;
+import lombok.Getter;
 
-@Builder
-@Entity
-@Table(name = "members")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 public class Member {
 
-    public enum Role {
-        ADMIN, USER
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "member_id", unique = true)
     private String memberId;
     private String password;
     private String name;
     private String email;
-    @Enumerated(EnumType.STRING)
-    private Role role;
 
     public void changePassword(String password) {
         this.password = password;
     }
 
-    public boolean isAdmin() {
-        return Member.Role.ADMIN.equals(role);
-    }
 
-    public static MemberDTO mapToDTO(Member member) {
-        return new MemberDTO(
-                member.getMemberId(),
-                member.getName(),
-                member.getEmail(),
-                member.isAdmin()
-        );
+    @Builder
+    public Member(String memberId, String password, String name, String email) {
+        this.memberId = memberId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
     }
 }

@@ -1,10 +1,10 @@
 package com.example.rest.member.application.service;
 
-import com.example.rest.member.adapter.out.SpringDataJpaMemberRepository;
-import com.example.rest.member.domain.Member;
+import com.example.rest.member.adapter.out.MemberJpaEntity;
 
-import com.example.rest.member.adapter.in.MemberDTO;
-import com.example.rest.member.adapter.in.command.LoginMemberCommand;
+import com.example.rest.member.domain.MemberDTO;
+import com.example.rest.member.adapter.in.command.LoginMemberRequest;
+import com.example.rest.member.application.port.out.FindMemberPort;
 import com.example.rest.utils.SHA256Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,25 +13,31 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReadMemberService {
 
-    private final SpringDataJpaMemberRepository jpaMemberRepository;
+    private final FindMemberPort findMemberPort;
 
     // 회원 조회
-    public Member findByMemberId(String memberId) {
-        return jpaMemberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+    public MemberDTO findByMemberId(String memberId) {
+        MemberJpaEntity memberJpaEntity = findMemberPort.findByMemberId(memberId);
+        return mapToDTO(memberJpaEntity);
     }
 
 
     //로그인 TODO: 스프링 시큐리티 적용.
-    public MemberDTO login(LoginMemberCommand loginMemberCommand) {
-        Member member = jpaMemberRepository.findByMemberId(loginMemberCommand.getMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+    public MemberDTO login(LoginMemberRequest loginMemberRequest) {
+        MemberJpaEntity memberJpaEntity = findMemberPort.findByMemberId(loginMemberRequest.getMemberId());
 
-        var hashedPassword = SHA256Util.encryptSHA256(loginMemberCommand.getPassword());
+        var hashedPassword = SHA256Util.encryptSHA256(loginMemberRequest.getPassword());
 
-        if (!hashedPassword.equals(member.getPassword())) {
+        if (!hashedPassword.equals(memberJpaEntity.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        return Member.mapToDTO(member);
+        return mapToDTO(memberJpaEntity);
+    }
+    public MemberDTO mapToDTO(MemberJpaEntity memberJpaEntity) {
+        return new MemberDTO(
+                memberJpaEntity.getMemberId(),
+                memberJpaEntity.getName(),
+                memberJpaEntity.getEmail()
+        );
     }
 }

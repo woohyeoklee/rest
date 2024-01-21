@@ -1,59 +1,52 @@
 package com.example.rest.member.application.service;
 
-import com.example.rest.member.adapter.out.SpringDataJpaMemberRepository;
+import com.example.rest.member.domain.MemberDTO;
+import com.example.rest.member.adapter.out.MemberJpaEntity;
+
+
+import com.example.rest.member.application.port.in.DeleteMemberCommand;
+import com.example.rest.member.application.port.in.RegisterMemberCommand;
+import com.example.rest.member.application.port.in.WriteMemberUseCase;
+import com.example.rest.member.application.port.out.DeleteMemberPort;
+import com.example.rest.member.application.port.out.RegisterMemberPort;
 import com.example.rest.member.domain.Member;
-import com.example.rest.member.adapter.in.command.ChangePasswordCommand;
-import com.example.rest.member.adapter.in.command.RegisterMemberCommand;
-
-
+import com.example.rest.utils.SHA256Util;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class WriteMemberService {
+public class WriteMemberService implements WriteMemberUseCase {
 
-    private final SpringDataJpaMemberRepository jpaMemberRepository;
-    private final ReadMemberService readMemberService;
+    private final RegisterMemberPort registerMemberPort;
+    private final DeleteMemberPort deleteMemberPort;
 
+    private final ReadMemberService readService;
 
-    //회원가입
-    public void register(@Valid RegisterMemberCommand register) {
-        if (jpaMemberRepository.existsByMemberId(register.getMemberId())) {
-            throw new IllegalArgumentException("이미 사용중인 아이디입니다.");
-        }
-        var hashedPassword = (register.getPassword());
-        Member member = Member.builder()
-                .memberId(register.getMemberId())
-                .password(hashedPassword)
-                .name(register.getName())
-                .email(register.getEmail())
-                .role(Member.Role.USER)
-                .build();
-        jpaMemberRepository.save(member);
+    @Override
+    public MemberDTO registerMember(@Valid RegisterMemberCommand registerCommand) {
+
+        var hashedPassword = SHA256Util.encryptSHA256(registerCommand.getPassword());
+        MemberJpaEntity memberJpaEntity = registerMemberPort.registerMember(
+                Member.builder()
+                        .memberId(registerCommand.getMemberId())
+                        .password(hashedPassword)
+                        .name(registerCommand.getName())
+                        .email(registerCommand.getEmail())
+                        .build()
+        );
+        return readService.mapToDTO(memberJpaEntity);
     }
 
-    // 비밀번호 변경
-    @Transactional
-    public void changePassword(ChangePasswordCommand command) {
-        Member member = readMemberService.findByMemberId(command.getMemberId());
-        var newHashedPassword = (command.getNewPassword());
-        member.changePassword(newHashedPassword);
-        jpaMemberRepository.save(member);
-    }
+    @Override
+    public void deleteMember(DeleteMemberCommand command) {
+        deleteMemberPort.deleteMember(
+                command.getMemberId(),
+                command.getPassword());
 
-    // 회원 탈퇴
-    public void deleteMember(String memberId) {
-        Member member = readMemberService.findByMemberId(memberId);
-        if (member != null) {
-            jpaMemberRepository.delete(member);
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
-        }
     }
 }

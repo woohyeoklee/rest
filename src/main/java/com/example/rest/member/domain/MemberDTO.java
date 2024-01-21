@@ -1,4 +1,4 @@
-package com.example.rest.member.adapter.in;
+package com.example.rest.member.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +12,4 @@ public class MemberDTO {
     private String memberId;
     private String name;
     private String email;
-    private boolean isAdmin;
-
 }
