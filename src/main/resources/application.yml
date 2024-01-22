@@ -1,0 +1,19 @@
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 1
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/rest
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
